@@ -6,11 +6,11 @@ void ofApp::setup(){
     thumbHeight = ofGetHeight() * 0.25;
     margin = 5;
     zoom = 1.25;
-    string file = "lookup.json";
+    lookupFile = "lookup.json";
 
     fullWidth = 0;
     ofxJSONElement result;
-    bool parsingSuccessful = result.open(file);
+    parsingSuccessful = result.open(lookupFile);
     for (int i=0; i<result.size(); i++) {
         string path = result[i]["path"].asString();
         ImageThumb thumb;
@@ -38,6 +38,10 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     ofBackground(0);
+    if (!parsingSuccessful) {
+        ofDrawBitmapString("Can't find lookup file: "+lookupFile+"\nSee instructions for how to create one.", 50, 50);
+        return;
+    }
 
     int centerX;
     float x = 10 - mx;
@@ -77,7 +81,8 @@ void ofApp::draw(){
         float y = ofGetHeight() - 2 * (thumbHeight + margin);
         ofSetColor(255);
         ofDrawBitmapString("Nearest neighbor images:", x + margin, y - margin);
-        for (int i=0; i<20; i++) {
+        int numNeighbors = min(30, (int) thumbs[highlighted].closest.size()-1);
+        for (int i=0; i<numNeighbors; i++) {
             thumbs[thumbs[highlighted].closest[i]].image.draw(x, y);
             x += (margin + thumbs[thumbs[highlighted].closest[i]].image.getWidth());
             if (x > (ofGetWidth() - thumbs[thumbs[highlighted].closest[i+1]].image.getWidth()*0.33)) {

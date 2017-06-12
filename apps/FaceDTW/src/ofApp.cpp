@@ -7,7 +7,7 @@ void ofApp::setup(){
     ofSetFrameRate( FRAME_RATE );
 
     //Load the resources
-    font.load("verdana.ttf", 12, true, true);
+    font.load(ofToDataPath("verdana.ttf"), 12, true, true);
     font.setLineHeight(14.0f);
     //shader.load("shaders/noise.vert", "shaders/noise.frag");
     
@@ -41,7 +41,7 @@ void ofApp::setup(){
     //Attempt to do post-processing -- see ClassLabelTimeOutFilterExample from ESP
     
     //Post-processing - Set the time between each prediction 
-pipeline.addPostProcessingModule( ClassLabelTimeoutFilter(timeOutFilter,ClassLabelTimeoutFilter::ALL_CLASS_LABELS) );
+    pipeline.addPostProcessingModule( ClassLabelTimeoutFilter(timeOutFilter,ClassLabelTimeoutFilter::ALL_CLASS_LABELS) );
     
     
     //Turn on the automatic data triming, this will remove any sections of none movement from the start and end of the training samples
@@ -69,7 +69,8 @@ pipeline.addPostProcessingModule( ClassLabelTimeoutFilter(timeOutFilter,ClassLab
     //grabber.setup(960,540);
     
     // Setup tracker
-    tracker.setup("../../../../models/shape_predictor_68_face_landmarks.dat");
+    tracker.setup(ofToDataPath("../../../../data/shape_predictor_68_face_landmarks.dat"));
+//    tracker.setup(ofToDataPath("shape_predictor_68_face_landmarks.dat"));
     
 }
 
@@ -487,12 +488,12 @@ void ofApp::keyPressed(int key){
             }else infoText = "WARNING: Failed to train pipeline";
             break;
         case 's':
-            if( trainingData.saveDatasetToFile("TrainingData.txt") ){
+            if( trainingData.saveDatasetToFile("TrainingData_FaceDTW.grt") ){
                 infoText = "Training data saved to file";
             }else infoText = "WARNING: Failed to save training data to file";
             break;
         case 'l':
-            if( trainingData.loadDatasetFromFile("TrainingData.txt") ){
+            if( trainingData.loadDatasetFromFile("TrainingData_FaceDTW.grt") ){
                 infoText = "Training data loaded from file";
             }else infoText = "WARNING: Failed to load training data from file";
             break;

@@ -3,14 +3,22 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
     ofSetWindowShape(1280, 800);
-    grab.initGrabber(640, 480);
-    ccv.setup("../../../../models/image-net-2012.sqlite3");
-    ccv.setEncode(true);
-    ccv.start();
+    ccv.setup(ofToDataPath("../../../../data/image-net-2012.sqlite3"));
+//    ccv.setup(ofToDataPath("image-net-2012.sqlite3"));
+
+    if (ccv.isLoaded()) {
+        grab.initGrabber(640, 480);
+        ccv.setEncode(true);
+        ccv.start();
+    }
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
+    if (!ccv.isLoaded()) {
+        return;
+    }
+    
     grab.update();
     if (inputMode == 0 && grab.isFrameNew() && ccv.isReady()) {
         ccv.update(grab, ccv.numLayers());
@@ -22,7 +30,10 @@ void ofApp::draw(){
     ofBackground(255);
 
     if (!ccv.isLoaded()) {
+        ofPushStyle();
+        ofSetColor(ofColor::red);
         ofDrawBitmapString("Can't find network file! Check to make sure it's in your data folder.", 20, 20);
+        ofPopStyle();
         return;
     }
     
